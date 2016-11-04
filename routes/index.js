@@ -4,6 +4,16 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 
+// Get /login
+router.get('/login', (req, res) => {
+  return res.render('login', {title : 'Log In'});
+});
+
+// Post /login
+router.post('/login', (req, res) => {
+  return res.send('You\'re login')
+})
+
 // GET /
 router.get('/', (req, res, next) => {
   return res.render('index', { title: 'Home' });
