@@ -12,6 +12,12 @@ app.use(session({
   saveUninitialized : false
 }));
 
+// make user ID available in templates
+app.use((req, res, next) => {
+  res.locals.currentUser = req.session.userId;
+  next();
+})
+
 // mongoose connection
 mongoose.connect('mongodb://localhost:27017/bookworm');
 mongoose.Promise = global.Promise;

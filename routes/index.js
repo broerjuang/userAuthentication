@@ -12,7 +12,6 @@ router.get('/profile', (req, res) => {
     return next(err);
   }
   User.findById(req.session.userId, (err, user) => {
-    //console.log(user);
     if (err) {
       return next(err)
     } else {
@@ -36,7 +35,6 @@ router.post('/login', (req, res, next) => {
         err.status = 401;
         return next(err)
       } else {
-        console.log(user._id);
         req.session.userId = user._id;
         return res.redirect('/profile');
       }
@@ -92,9 +90,7 @@ router.post('/register', (req, res, next) => {
       };
 
       // use schema's crate method to insert document into mongodb
-      console.log(userData);
       User.create(userData, (err, user, next) => {
-        console.log(user._id)
         req.session.userId = user._id;
         err ? next(err) : res.redirect('/profile')
       })
