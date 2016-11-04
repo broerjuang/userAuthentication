@@ -4,14 +4,48 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 
+// Get /profile
+router.get('/profile', (req, res) => {
+  if (! req.session.userId) {
+    var err = new Error ('You\'re not authorize to view this page')
+    err.status = 403;
+    return next(err);
+  }
+  User.findById(req.session.userId, (err, user) => {
+    //console.log(user);
+    if (err) {
+      return next(err)
+    } else {
+      return res.render('profile', { title : 'profile', name : user.name, favorite : user.favoriteBook})
+    }
+  });
+})
+
+
 // Get /login
 router.get('/login', (req, res) => {
   return res.render('login', {title : 'Log In'});
 });
 
 // Post /login
-router.post('/login', (req, res) => {
-  return res.send('You\'re login')
+router.post('/login', (req, res, next) => {
+  if (req.body.email && req.body.password) {
+    User.authenticate(req.body.email, req.body.password, (err, user) => {
+      if (err || !user) {
+        var err = new Error('Wrong email or password')
+        err.status = 401;
+        return next(err)
+      } else {
+        console.log(user._id);
+        req.session.userId = user._id;
+        return res.redirect('/profile');
+      }
+    })
+  } else {
+    var err = new Error('Email and Password are required');
+    err.status = 401;
+    return next(err);
+  }
 })
 
 // GET /
@@ -59,7 +93,9 @@ router.post('/register', (req, res, next) => {
 
       // use schema's crate method to insert document into mongodb
       console.log(userData);
-      User.create(userData, (err, user) => {
+      User.create(userData, (err, user, next) => {
+        console.log(user._id)
+        req.session.userId = user._id;
         err ? next(err) : res.redirect('/profile')
       })
     } else {

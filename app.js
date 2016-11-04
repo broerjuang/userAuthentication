@@ -4,15 +4,17 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const app = express();
 
+
 // use sessions for tracking logins
 app.use(session({
   secret : 'anything',
   resave : true,
-  saveUninitialize : false
+  saveUninitialized : false
 }));
 
 // mongoose connection
 mongoose.connect('mongodb://localhost:27017/bookworm');
+mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 
 // mongo error
