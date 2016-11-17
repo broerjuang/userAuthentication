@@ -46,9 +46,18 @@ router.post('/login', (req, res, next) => {
   }
 })
 
-// GET /
-router.get('/', (req, res, next) => {
-  return res.render('index', { title: 'Home' });
+// GET /logout
+router.get('/logout', function(req, res, next) {
+  if (req.session) {
+    // delete session object
+    req.session.destroy(function(err) {
+      if(err) {
+        return next(err);
+      } else {
+        return res.redirect('/');
+      }
+    });
+  }
 });
 
 // GET /about
@@ -65,6 +74,10 @@ router.get('/contact', (req, res, next) => {
 router.get('/register', (req, res, next) => {
   return res.render('register', { title: 'Sign Up'})
   //return res.render('register', { title: 'Register'})
+});
+
+router.get('/logout', (req, res, next) => {
+  return res.render('index', { title: 'Home' });
 });
 
 //POST /register
